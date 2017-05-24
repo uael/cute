@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
 project(cute)
 
+option(COVERAGE "Turn on COVERAGE support" OFF)
+
+if(COVERAGE AND NOT MSVC)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
+endif()
+
 if(CMAKE_VERSION VERSION_LESS "3.1")
     if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
         set(CMAKE_C_FLAGS "-std=c99 ${CMAKE_C_FLAGS}")
