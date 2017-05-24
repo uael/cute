@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef  U_CUTEST_H__
-# define U_CUTEST_H__
+#ifndef CUTE_H__
+# define CUTE_H__
 
 #include <assert.h>
 #include <stdio.h>
@@ -105,4 +105,4 @@ FORCEINLINE CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_l
   return CUTE_SUCCESS;
 }
 
-#endif /* U_CUTEST_H__ */
+#endif /* CUTE_H__ */
