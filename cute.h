@@ -52,6 +52,9 @@
 # define GREEN "\033[32m"
 #endif
 
+#define CUTE_SUCCESS EXIT_SUCCESS
+#define CUTE_FAILURE EXIT_FAILURE
+
 #define CUTEST_DATA struct CUTEST
 typedef CUTEST_DATA CUTEST_t;
 
@@ -65,29 +68,41 @@ typedef CUTEST_DATA CUTEST_t;
 
 #define CUTEST_PADDING "................................."
 #define CUTEST_FN(suite, name) suite ## _ ## name ## _test
-#define CUTEST_RUN(suite, name) \
-  do if (test_run(&test, #suite ":" #name, sizeof(#suite ":" #name)-1, CUTEST_FN(suite, name)) == EXIT_FAILURE) \
-      return EXIT_FAILURE; \
+#define CUTEST_RUN(suite, name, should_fail) \
+  do if (test_run(&test, #suite ":" #name, sizeof(#suite ":" #name)-1, should_fail, CUTEST_FN(suite, name)) == CUTE_FAILURE) \
+      return CUTE_FAILURE; \
   while (0)
+#define CUTEST_PASS(suite, name) CUTEST_RUN(suite, name, 0)
+#define CUTEST_FAIL(suite, name) CUTEST_RUN(suite, name, 1)
 #define CUTEST(suite, name) static const char *CUTEST_FN(suite, name)(CUTEST_t *self)
 
 CUTEST_SETUP;
 CUTEST_TEARDOWN;
 
-FORCEINLINE CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_len, const char *(*test_fn)(CUTEST_t *)) {
-    const char *result;
-    int s = sizeof(CUTEST_PADDING) - id_len - 1;
+FORCEINLINE CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_len, unsigned char should_fail,
+                                   const char *(*test_fn)(CUTEST_t *)) {
+  const char *result;
+  int s = sizeof(CUTEST_PADDING) - id_len - 1;
 
-    printf("Test:     %s %*.*s   ", id, s, s, CUTEST_PADDING);
-    test_setup(self);
-    result = test_fn(self);
-    test_teardown(self);
+  printf("Test:     %s %*.*s   ", id, s, s, CUTEST_PADDING);
+  test_setup(self);
+  result = test_fn(self);
+  test_teardown(self);
+
+  if (should_fail) {
     if (result) {
-        printf(RED "[FAILED] ‘%s’" RESET "\n", result);
-        return EXIT_FAILURE;
+      printf(GREEN "[" RED "FAIL" GREEN " ~>  OK] ‘%s’" RESET "\n", result);
+      return CUTE_SUCCESS;
     }
-    puts(GREEN "[OK]" RESET);
-    return EXIT_SUCCESS;
+    printf(RED "[FAIL ~> NOK] ‘%s’" RESET "\n", result);
+    return CUTE_FAILURE;
+  }
+  if (result) {
+    printf(RED "[PASS ~> NOK] ‘%s’" RESET "\n", result);
+    return CUTE_FAILURE;
+  }
+  puts(GREEN "[PASS ~>  OK]" RESET);
+  return CUTE_SUCCESS;
 }
 
 #endif /* U_CUTEST_H__ */

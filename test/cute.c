@@ -42,22 +42,34 @@ CUTEST(cute, dummy1) {
   return NULL;
 }
 
+CUTEST(cute, dummy12) {
+  ASSERT(1 == self->dummy);
+  return NULL;
+}
+
 CUTEST(cute, dummy2) {
-  ASSERT(4 == self->dummy);
+  ASSERT(7 == self->dummy);
+  return NULL;
+}
+
+CUTEST(cute, dummy22) {
+  ASSERT(1 == self->dummy);
   return NULL;
 }
 
 CUTEST(cute, dummy3) {
-  ASSERT(7 == self->dummy);
+  ASSERT(13 == self->dummy);
   return NULL;
 }
 
 int main(void) {
   CUTEST_DATA test = {0};
 
-  CUTEST_RUN(cute, dummy1);
-  CUTEST_RUN(cute, dummy2);
-  CUTEST_RUN(cute, dummy3);
+  CUTEST_PASS(cute, dummy1);
+  CUTEST_FAIL(cute, dummy12);
+  CUTEST_PASS(cute, dummy2);
+  CUTEST_FAIL(cute, dummy22);
+  CUTEST_PASS(cute, dummy3);
 
   return EXIT_SUCCESS;
 }
