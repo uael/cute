@@ -31,15 +31,15 @@
 #include <stdlib.h>
 
 #if defined(_MSC_VER) || defined(__ICL) || defined(__ICC) || defined(__INTEL_COMPILER)
-# define FORCEINLINE __forceinline
-# define CONSTCALL
+# define CUTE_FORCEINLINE __forceinline
+# define CUTE_CONSTCALL
 #elif defined(__GNUC__) || defined(__clang__)
-# define FORCEINLINE inline __attribute__((__always_inline__))
-# define CONSTCALL __attribute__((__const__))
+# define CUTE_FORCEINLINE inline __attribute__((__always_inline__))
+# define CUTE_CONSTCALL __attribute__((__const__))
 #else
 # warning Unknown compiler
-# define FORCEINLINE
-# define CONSTCALL
+# define CUTE_FORCEINLINE
+# define CUTE_CONSTCALL
 #endif
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
@@ -79,8 +79,8 @@ typedef CUTEST_DATA CUTEST_t;
 CUTEST_SETUP;
 CUTEST_TEARDOWN;
 
-FORCEINLINE CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_len, unsigned char should_fail,
-                                   const char *(*test_fn)(CUTEST_t *)) {
+CUTE_FORCEINLINE CUTE_CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_len, unsigned char should_fail,
+                                             const char *(*test_fn)(CUTEST_t *)) {
   const char *result;
   int s = sizeof(CUTEST_PADDING) - id_len - 1;
 
