@@ -1,11 +1,7 @@
-cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 project(cute)
 
 option(COVERAGE "Turn on COVERAGE support" OFF)
-
-if(COVERAGE AND NOT MSVC)
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
-endif()
 
 if(CMAKE_VERSION VERSION_LESS "3.1")
     if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
@@ -15,9 +11,28 @@ else()
     set(CMAKE_C_STANDARD 99)
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
+if(COVERAGE AND NOT MSVC)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
+endif()
+
+set(cute_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
+set(cute_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
+set(cute_TEST_DIR ${CMAKE_CURRENT_LIST_DIR}/test)
+
+file(GLOB_RECURSE cute_HEADERS ${cute_HEADERS} ${cute_INCLUDE_DIR}/*.h)
+file(GLOB_RECURSE cute_SOURCES ${cute_SOURCES} ${cute_SOURCE_DIR}/*.c)
+
+add_library(${PROJECT_NAME} STATIC ${cute_SOURCES} ${cute_HEADERS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${cute_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${cute_SOURCE_DIR})
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${cute_HEADERS}")
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Werror -Wextra)
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    target_compile_options(${PROJECT_NAME} PRIVATE -O0 -g3)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG")
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -O3)
+endif()
 
 if(MSVC)
     set(CMAKE_FLAGS
@@ -33,18 +48,6 @@ if(MSVC)
         string(REPLACE "/MDd" "/MTd" ${CMAKE_FLAG} "${${CMAKE_FLAG}}")
     endforeach()
 endif()
-
-set(cute_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
-set(cute_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
-set(cute_TEST_DIR ${CMAKE_CURRENT_LIST_DIR}/test)
-
-file(GLOB_RECURSE cute_HEADERS ${cute_HEADERS} ${cute_INCLUDE_DIR}/*.h)
-file(GLOB_RECURSE cute_SOURCES ${cute_SOURCES} ${cute_SOURCE_DIR}/*.c)
-
-add_library(${PROJECT_NAME} STATIC ${cute_SOURCES} ${cute_HEADERS})
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${cute_HEADERS}")
-target_include_directories(${PROJECT_NAME} PUBLIC ${cute_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${cute_SOURCE_DIR})
 
 if(EXISTS ${cute_TEST_DIR})
     enable_testing()
