@@ -56,8 +56,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${cute_HEADERS}"
 target_include_directories(${PROJECT_NAME} PUBLIC ${cute_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${cute_SOURCE_DIR})
 
-enable_testing()
-add_subdirectory(${cute_TEST_DIR})
+if(EXISTS ${cute_TEST_DIR})
+    enable_testing()
+    add_subdirectory(${cute_TEST_DIR})
+endif()
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
