@@ -47,7 +47,7 @@
 #elif defined(__LCLINT__)
 # define CUTE_UNUSED /*@unused@*/
 #else
-# define CUTE_UNUSED x
+# define CUTE_UNUSED
 #endif
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
