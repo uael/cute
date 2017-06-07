@@ -42,6 +42,16 @@
 # define CUTE_CONSTCALL
 #endif
 
+#ifdef __cplusplus
+# define CUTE_UNUSED [[unused]]
+#elif defined(__GNUC__) || defined(__clang__)
+# define CUTE_UNUSED __attribute__((unused))
+#elif defined(__LCLINT__)
+# define CUTE_UNUSED /*@unused@*/
+#else
+# define CUTE_UNUSED x
+#endif
+
 #if defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
 # define RESET
 # define RED
@@ -74,7 +84,7 @@ typedef CUTEST_DATA CUTEST_t;
   while (0)
 #define CUTEST_PASS(suite, name) CUTEST_RUN(suite, name, 0)
 #define CUTEST_FAIL(suite, name) CUTEST_RUN(suite, name, 1)
-#define CUTEST(suite, name) static const char *CUTEST_FN(suite, name)(CUTEST_t *self)
+#define CUTEST(suite, name) static const char *CUTEST_FN(suite, name)(CUTE_UNUSED CUTEST_t *self)
 
 CUTEST_SETUP;
 CUTEST_TEARDOWN;
