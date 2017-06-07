@@ -42,9 +42,7 @@
 # define CUTE_CONSTCALL
 #endif
 
-#ifdef __cplusplus
-# define CUTE_UNUSED [[unused]]
-#elif defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__) || defined(__clang__)
 # define CUTE_UNUSED __attribute__((unused))
 #elif defined(__LCLINT__)
 # define CUTE_UNUSED /*@unused@*/
