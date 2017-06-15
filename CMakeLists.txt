@@ -4,7 +4,7 @@ project(cute)
 cmake_policy(SET CMP0054 OLD)
 cmake_policy(SET CMP0045 OLD)
 
-option(DEVEL "Build as development environment" ON)
+option(${PROJECT_NAME}_DEVEL "Build as development environment" ON)
 option(COVERAGE "Turn on COVERAGE support" OFF)
 
 if ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
@@ -36,14 +36,18 @@ set(${PROJECT_NAME}_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 set(${PROJECT_NAME}_TEST_DIR ${CMAKE_CURRENT_LIST_DIR}/test)
 set(${PROJECT_NAME}_VENDOR_DIR ${CMAKE_CURRENT_LIST_DIR}/vendor)
 
-if (EXISTS ${${PROJECT_NAME}_VENDOR_DIR}/CMakeLists.txt)
-    add_subdirectory(${${PROJECT_NAME}_VENDOR_DIR})
-endif ()
 if (EXISTS ${${PROJECT_NAME}_INCLUDE_DIR})
     file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_INCLUDE_DIR}/${PROJECT_NAME}/*.h)
 endif ()
 if (EXISTS ${${PROJECT_NAME}_SOURCE_DIR})
     file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_SOURCE_DIR}/*.c)
+endif ()
+
+if (EXISTS ${${PROJECT_NAME}_VENDOR_DIR}/CMakeLists.txt)
+    add_subdirectory(${${PROJECT_NAME}_VENDOR_DIR})
+endif ()
+if (EXISTS ${${PROJECT_NAME}_SOURCE_DIR}/CMakeLists.txt)
+    add_subdirectory(${${PROJECT_NAME}_SOURCE_DIR})
 endif ()
 
 add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
@@ -77,9 +81,11 @@ if (MSVC)
     endforeach ()
 endif ()
 
-if (DEVEL AND EXISTS ${${PROJECT_NAME}_TEST_DIR}/CMakeLists.txt)
-    enable_testing()
-    add_subdirectory(${${PROJECT_NAME}_TEST_DIR})
+if (${PROJECT_NAME}_DEVEL)
+    if (EXISTS ${${PROJECT_NAME}_TEST_DIR}/CMakeLists.txt)
+        enable_testing()
+        add_subdirectory(${${PROJECT_NAME}_TEST_DIR})
+    endif ()
 
     install(TARGETS ${PROJECT_NAME}
       RUNTIME DESTINATION bin
