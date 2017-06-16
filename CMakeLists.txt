@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
-project(cute)
+include(CMakeParseArguments)
 
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 cmake_policy(SET CMP0054 OLD)
 cmake_policy(SET CMP0045 OLD)
 
-include(CMakeParseArguments)
+if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/cmake/properties.cmake)
+  message(FATAL_ERROR "cmake/properties.cmake file should exists.")
+endif()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/properties.cmake)
 
 get_directory_property(${PROJECT_NAME}_PARENT PARENT_DIRECTORY)
 if (NOT ${PROJECT_NAME}_PARENT)
@@ -20,7 +23,7 @@ if (NOT COMMAND project_dependency)
       set(${PROJECT_NAME}_DEPS ${${PROJECT_NAME}_DEPS} ${DEP} PARENT_SCOPE)
     endif ()
     set(${DEP}_LINK ${DL_ARGS_LINK} PARENT_SCOPE)
-    if (NOT ${DEP}_TEST OR ${PROJECT_NAME}_DEVEL)
+    if (NOT DL_ARGS_TEST OR ${PROJECT_NAME}_DEVEL)
       set(DL_ARGS_BUILD_DIR "${CMAKE_BINARY_DIR}/vendor/${DEP}")
       set(DL_ARGS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/vendor/${DEP}")
       file(WRITE "${DL_ARGS_BUILD_DIR}/CMakeLists.txt"
@@ -48,8 +51,8 @@ if (NOT COMMAND project_dependency)
   endfunction()
 endif ()
 
-if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/dependencies.cmake)
-  include(${CMAKE_CURRENT_LIST_DIR}/dependencies.cmake)
+if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake)
 endif ()
 
 if ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
