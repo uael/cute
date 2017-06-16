@@ -48,8 +48,8 @@ if (NOT COMMAND project_dependency)
   endfunction()
 endif ()
 
-if (EXISTS ${CMAKE_SOURCE_DIR}/dependencies.cmake)
-  include(dependencies.cmake)
+if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/dependencies.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/dependencies.cmake)
 endif ()
 
 if ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
