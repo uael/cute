@@ -78,7 +78,7 @@ typedef CUTEST_DATA CUTEST_t;
 #define CUTEST_FN(suite, name) suite ## _ ## name ## _test
 #define CUTEST_RUN(suite, name, should_fail) \
   do if (test_run(&test, #suite ":" #name, sizeof(#suite ":" #name)-1, should_fail, CUTEST_FN(suite, name)) == CUTE_FAILURE) \
-      return CUTE_FAILURE; \
+      res = CUTE_FAILURE; \
   while (0)
 #define CUTEST_PASS(suite, name) CUTEST_RUN(suite, name, 0)
 #define CUTEST_FAIL(suite, name) CUTEST_RUN(suite, name, 1)
