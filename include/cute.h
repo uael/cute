@@ -37,7 +37,6 @@
 # define CUTE_FORCEINLINE inline __attribute__((__always_inline__))
 # define CUTE_CONSTCALL __attribute__((__const__))
 #else
-# warning Unknown compiler
 # define CUTE_FORCEINLINE
 # define CUTE_CONSTCALL
 #endif
@@ -64,6 +63,7 @@
 #define CUTE_FAILURE EXIT_FAILURE
 
 #define CUTEST_DATA struct CUTEST
+
 typedef CUTEST_DATA CUTEST_t;
 
 #define CUTEST_SETUP void test_setup(CUTEST_t *self)
@@ -73,6 +73,10 @@ typedef CUTEST_DATA CUTEST_t;
 #define S2(x) S1(x)
 #define LOCATION __FILE__ ":" S2(__LINE__)
 #define ASSERT(expr) do if (!(expr)) return LOCATION " -> " #expr; while (0)
+#define FAIL(msg) return (msg);
+#define ASSERT_EQ(v, e) do if ((v) != (e)) return LOCATION " -> " #v " == " #e; while (0)
+#define ASSERT_NEQ(v, e) do if ((v) == (e)) return LOCATION " -> " #v " != " #e; while (0)
+#define ASSERT_CLOSE(v, e, p) do if (double_close(v, e, p) == 0) return LOCATION " -> " #v " == " #e; while (0)
 
 #define CUTEST_PADDING "................................."
 #define CUTEST_FN(suite, name) suite ## _ ## name ## _test
@@ -85,10 +89,13 @@ typedef CUTEST_DATA CUTEST_t;
 #define CUTEST(suite, name) static const char *CUTEST_FN(suite, name)(CUTE_UNUSED CUTEST_t *self)
 
 CUTEST_SETUP;
+
 CUTEST_TEARDOWN;
 
-CUTE_FORCEINLINE CUTE_CONSTCALL int test_run(CUTEST_t *self, const char *id, unsigned id_len, unsigned char should_fail,
-                                             const char *(*test_fn)(CUTEST_t *)) {
+CUTE_FORCEINLINE CUTE_CONSTCALL int
+test_run(CUTEST_t *self, const char *id, unsigned id_len,
+  unsigned char should_fail,
+  const char *(*test_fn)(CUTEST_t *)) {
   const char *result;
   int s = sizeof(CUTEST_PADDING) - id_len - 1;
 
@@ -111,6 +118,11 @@ CUTE_FORCEINLINE CUTE_CONSTCALL int test_run(CUTEST_t *self, const char *id, uns
   }
   puts(GREEN "[PASS ~>  OK]" RESET);
   return CUTE_SUCCESS;
+}
+
+CUTE_FORCEINLINE CUTE_CONSTCALL int
+double_close(double val, double expect, double precision) {
+  return val >= expect - precision && val <= expect + precision;
 }
 
 #endif /* CUTE_H__ */

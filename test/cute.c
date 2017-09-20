@@ -70,6 +70,5 @@ int main(void) {
   CUTEST_PASS(cute, dummy2);
   CUTEST_FAIL(cute, dummy22);
   CUTEST_PASS(cute, dummy3);
-
   return EXIT_SUCCESS;
 }
