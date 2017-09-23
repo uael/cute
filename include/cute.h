@@ -69,12 +69,23 @@ typedef CUTEST_DATA CUTEST_t;
 #define CUTEST_SETUP void test_setup(CUTEST_t *self)
 #define CUTEST_TEARDOWN void test_teardown(CUTEST_t *self)
 
+char __cute_str_err[255];
+
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION __FILE__ ":" S2(__LINE__)
 #define ASSERT(expr) do if (!(expr)) return LOCATION " -> " #expr; while (0)
 #define FAIL(msg) return (msg);
-#define ASSERT_EQ(v, e) do if ((v) != (e)) return LOCATION " -> " #v " == " #e; while (0)
+#define ASSERT_EQ(e, g) \
+  do { \
+    i64_t __expect, __got; \
+    __expect = (i64_t) (e); \
+    __got = (i64_t) (g); \
+    if (__expect != __got) { \
+      sprintf(__cute_str_err, LOCATION " -> %lli != %lli", __expect, __got); \
+      return __cute_str_err; \
+    } \
+  } while (0)
 #define ASSERT_NEQ(v, e) do if ((v) == (e)) return LOCATION " -> " #v " != " #e; while (0)
 #define ASSERT_CLOSE(v, e, p) do if (double_close(v, e, p) == 0) return LOCATION " -> " #v " == " #e; while (0)
 
