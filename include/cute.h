@@ -78,9 +78,9 @@ char __cute_str_err[255];
 #define FAIL(msg) return (msg);
 #define ASSERT_EQ(e, g) \
   do { \
-    i64_t __expect, __got; \
-    __expect = (i64_t) (e); \
-    __got = (i64_t) (g); \
+    long long __expect, __got; \
+    __expect = (long long) (e); \
+    __got = (long long) (g); \
     if (__expect != __got) { \
       sprintf(__cute_str_err, LOCATION " -> %lli != %lli", __expect, __got); \
       return __cute_str_err; \
